@@ -1,7 +1,7 @@
 {
   "name": "lingo",
   "displayName": "Lingo",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "description": "A shared dictionary between you and your coding agent: a living record of every named part of your project — components, endpoints, modules, commands — so you can point precisely.",
   "publisher": "pwnsbd",

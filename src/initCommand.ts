@@ -34,6 +34,10 @@ Do this:
 4. **Do not edit any code.** This is a read-and-record pass only.
 5. Use the names already in the code — don't invent new ones.
 
+**Especially capture these — the things people forget:**
+
+${profile.remember.map((r) => `- ${r}`).join("\n")}
+
 When done, summarise: which ${areas} you covered and how many things you logged.
 `;
 }

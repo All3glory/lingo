@@ -11,8 +11,9 @@ export function registerLingoTools(server: McpServer, store: LingoStore): void {
     ? `Suggested \`kind\` values for this project: ${profile.kinds.join(", ")}.`
     : "Use whatever short `kind` label fits (e.g. service, model, job).";
 
+  const a = /^[aeiou]/i.test(profile.label) ? "an" : "a";
   const description = [
-    `Record a named thing in this project's Lingo (a ${profile.label}).`,
+    `Record a named thing in this project's Lingo (${a} ${profile.label}).`,
     "",
     `Call this whenever you create, rename, restyle, or meaningfully change a`,
     `${profile.records}. Do it as part of the same change, not batched later.`,

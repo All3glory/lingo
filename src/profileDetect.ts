@@ -20,6 +20,34 @@ export async function detectProfile(folder: vscode.Uri): Promise<string> {
   const score: Record<string, number> = {};
   const bump = (id: string, n = 1) => (score[id] = (score[id] ?? 0) + n);
 
+  // mobile (check before web — RN/Expo also pull in react)
+  if (
+    has(
+      "react-native",
+      "expo",
+      "@react-navigation/native",
+      "@ionic/react",
+      "@ionic/angular",
+      "nativescript",
+    )
+  ) {
+    bump("mobile", 3);
+  }
+  if ((await fileExists("android")) && (await fileExists("ios"))) {
+    bump("mobile", 2);
+  }
+  if (await fileExists("pubspec.yaml")) bump("mobile", 2); // Flutter
+
+  // desktop (check before web — Electron/Tauri also pull in a UI framework)
+  if (
+    has("electron", "@electron/remote", "nw", "@tauri-apps/api") ||
+    (await fileExists("src-tauri")) ||
+    (await fileExists("electron-builder.yml")) ||
+    (await fileExists("electron.vite.config.ts"))
+  ) {
+    bump("desktop", 3);
+  }
+
   // web
   if (
     has(
@@ -42,7 +70,7 @@ export async function detectProfile(folder: vscode.Uri): Promise<string> {
   if (await anyFile("**/*.{tsx,jsx,vue,svelte,astro}")) bump("web", 1);
   if ((await fileExists("pages")) || (await fileExists("app"))) bump("web", 1);
 
-  // service
+  // backend
   if (
     has(
       "express",
@@ -59,7 +87,7 @@ export async function detectProfile(folder: vscode.Uri): Promise<string> {
       "gin",
     )
   ) {
-    bump("service", 2);
+    bump("backend", 2);
   }
   if (
     (await fileExists("routes")) ||
@@ -67,9 +95,34 @@ export async function detectProfile(folder: vscode.Uri): Promise<string> {
     (await fileExists("api")) ||
     (await fileExists("prisma/schema.prisma"))
   ) {
-    bump("service", 1);
+    bump("backend", 1);
   }
-  if (await anyFile("**/{openapi,swagger}.{yaml,yml,json}")) bump("service", 1);
+  if (await anyFile("**/{openapi,swagger}.{yaml,yml,json}")) bump("backend", 1);
+
+  // game
+  if (
+    has("phaser", "pixi.js", "excalibur", "three", "babylonjs", "@babylonjs/core")
+  ) {
+    bump("game", 1);
+  }
+  if (
+    (await fileExists("project.godot")) ||
+    (await fileExists("Assets")) || // Unity
+    (await anyFile("**/*.tscn"))
+  ) {
+    bump("game", 3);
+  }
+
+  // infra
+  if (
+    has("@pulumi/pulumi", "aws-cdk-lib", "cdktf", "@cdktf/provider-aws") ||
+    (await anyFile("**/*.tf")) ||
+    (await fileExists("Pulumi.yaml")) ||
+    (await fileExists("cdk.json")) ||
+    (await fileExists("serverless.yml"))
+  ) {
+    bump("infra", 3);
+  }
 
   // cli
   if (await hasBin(folder)) bump("cli", 2);

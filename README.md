@@ -29,11 +29,13 @@ No vague descriptions, no guessing — on your side or the agent's.
 
 ## It adapts to the project
 
-Lingo picks a **profile** at setup — website, backend service, library, CLI,
-data project, or generic — detected from your dependencies and layout, with a
-dropdown to override. The profile sets the grouping ("Page" vs "Service" vs
-"Module"), the vocabulary the agent uses for `kind`, and which sidebar view
-opens by default.
+Lingo picks a **profile** at setup — website, backend, library, CLI, data
+project, mobile app, desktop app, game, infra, or generic — detected from your
+dependencies and layout, with a dropdown to override. The profile sets the
+grouping ("Page" vs "Area" vs "Module"), the `kind` vocabulary the agent uses,
+the default sidebar view, and a per-type list of *"especially log these"* — the
+details that are easy to forget for that kind of project (an endpoint's
+method+path, a data pipeline's lineage, a desktop app's IPC channel names).
 
 ## Why I built this
 

@@ -72,9 +72,21 @@ test("kind/parent/codeId round-trip and survive a later re-log", () => {
 test("profile is stored and read back", () => {
   const store = LingoStore.open(":memory:");
   assert.equal(store.getProfile(), null);
-  store.setProfile("service");
-  assert.equal(store.getProfile(), "service");
+  store.setProfile("backend");
+  assert.equal(store.getProfile(), "backend");
   store.close();
+});
+
+test("migrate rewrites the retired `service` profile to `backend`", () => {
+  const dir = process.env.TMPDIR || process.env.TEMP || ".";
+  const path = `${dir}/lingo-profile-migrate-${Date.now()}.sqlite`;
+  const first = LingoStore.open(path);
+  first.setMeta("profile", "service");
+  first.close();
+
+  const reopened = LingoStore.open(path);
+  assert.equal(reopened.getProfile(), "backend");
+  reopened.close();
 });
 
 test("migrates a v3 database: page -> area, adds parent", () => {

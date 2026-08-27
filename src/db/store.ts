@@ -269,7 +269,10 @@ export class LingoStore {
   }
 }
 
-/** Bring an older database forward: rename `page` -> `area`, add new columns. */
+/**
+ * Bring an older database forward: rename `page` -> `area`, add new columns,
+ * and rename the retired `service` profile to `backend`.
+ */
 function migrate(db: DatabaseSync): void {
   const cols = () =>
     new Set(
@@ -292,6 +295,9 @@ function migrate(db: DatabaseSync): void {
       db.exec(col.ddl);
     }
   }
+  db.exec(
+    "UPDATE meta SET value = 'backend' WHERE key = 'profile' AND value = 'service'",
+  );
 }
 
 function safeParseArray(value: string): string[] {

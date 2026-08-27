@@ -35,6 +35,10 @@ Pass:
 - \`codeId\` (optional) — the exact code identifier (export name, DOM id, selector)
 - \`previousName\` — only on a rename
 
+**Especially log these — they're the ones people forget:**
+
+${profile.remember.map((r) => `- ${r}`).join("\n")}
+
 **Before changing something that already exists**, call \`list_elements\`
 (optionally filtered by \`area\`) or \`get_element\` to recall the exact name.
 
