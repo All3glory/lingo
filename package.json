@@ -73,6 +73,10 @@
         "icon": "$(folder-opened)"
       },
       {
+        "command": "lingo.changeType",
+        "title": "Lingo: Change project type"
+      },
+      {
         "command": "lingo.copyInitCommand",
         "title": "Lingo: Copy the /lingo-init command"
       },

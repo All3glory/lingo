@@ -31,6 +31,7 @@ interface Snapshot {
 function profilePayload(p: Profile) {
   return {
     id: p.id,
+    label: p.label,
     areaNoun: p.areaNoun,
     areaNounPlural: p.areaNounPlural,
     views: p.views,
@@ -156,6 +157,35 @@ export class LingoViewProvider implements vscode.WebviewViewProvider {
           void this.onProfilePicked(m.id);
         }
         break;
+    }
+  }
+
+  /**
+   * The escape hatch for a wrong detection — bound to "Lingo: Change project
+   * type". Not in the sidebar: the type is a one-time choice.
+   */
+  async changeProjectType(): Promise<void> {
+    if (!this.activeFolder) {
+      void vscode.window.showInformationMessage("Lingo: no project selected.");
+      return;
+    }
+    const current = getProfile(
+      (await this.readSnapshot(this.activeFolder).catch(() => null))?.profile,
+    );
+    const pick = await vscode.window.showQuickPick(
+      Object.values(PROFILES).map((p) => ({
+        label: p.label + (p.id === current.id ? "  (current)" : ""),
+        description: p.blurb,
+        id: p.id,
+      })),
+      { title: "Lingo: project type", placeHolder: "Regenerates CLAUDE.md" },
+    );
+    if (pick && pick.id !== current.id) {
+      await this.onProfilePicked(pick.id);
+      void vscode.window.showInformationMessage(
+        `Lingo project type is now "${getProfile(pick.id).label}". ` +
+          "Restart Claude Code to pick up the new CLAUDE.md.",
+      );
     }
   }
 
@@ -391,7 +421,6 @@ export class LingoViewProvider implements vscode.WebviewViewProvider {
         elements: snap.elements,
         areas: snap.areas,
         profile: profilePayload(profile),
-        profiles: PROFILE_CHOICES,
         suggestInit,
         initCommand: `/${INIT_COMMAND_NAME}`,
       });

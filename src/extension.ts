@@ -20,6 +20,9 @@ export function activate(context: vscode.ExtensionContext): void {
       provider.promptPickFolder(),
     ),
     vscode.commands.registerCommand("lingo.setup", () => provider.runSetup()),
+    vscode.commands.registerCommand("lingo.changeType", () =>
+      provider.changeProjectType(),
+    ),
     vscode.commands.registerCommand("lingo.copyInitCommand", () =>
       provider.copyInitCommand(),
     ),

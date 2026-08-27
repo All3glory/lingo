@@ -18,6 +18,9 @@
   that project's own `.lingo/lingo.sqlite`. `/lingo-init` now takes a folder
   argument (`/lingo-init packages/api`) and tells the agent to pass `project`
   accordingly — so you can catalog a sub-project without opening it directly.
+- The project type is a one-time choice at setup (pick from the dropdown, or
+  take the detected default). The sidebar no longer shows a type switcher; use
+  **Lingo: Change project type** in the command palette if detection was wrong.
 
 ## 0.1.2
 

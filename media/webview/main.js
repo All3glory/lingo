@@ -149,16 +149,14 @@
   function renderReady() {
     const bar = folderBar(state.folder);
     if (state.profile) {
-      const chip = el("span", {
-        class: "profile-chip",
-        text: labelFor(state.profile.id),
-      });
-      const sel = profileSelect(state.profile.id);
-      sel.classList.add("chip-select");
-      const wrap = el("span", { class: "chip-wrap" });
-      wrap.appendChild(chip);
-      wrap.appendChild(sel);
-      bar.appendChild(wrap);
+      // Read-only — the type is chosen once at setup. "Lingo: Change project
+      // type" in the command palette is the escape hatch.
+      bar.appendChild(
+        el("span", {
+          class: "profile-chip",
+          text: state.profile.label || state.profile.id,
+        }),
+      );
     }
     root.appendChild(bar);
 
@@ -235,11 +233,6 @@
   }
 
   const VIEW_LABELS = { glossary: "Glossary", tree: "Tree", map: "Map" };
-
-  function labelFor(id) {
-    const p = (state.profiles || []).find((x) => x.id === id);
-    return p ? p.label : id;
-  }
 
   // ---- shared bits -----------------------------------------------------
 
