@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+- Publisher id is `pwnsbd`, so the extension id is now **`pwnsbd.lingo`**
+  (was `All3gory.lingo`). If you installed an earlier `.vsix`, uninstall it and
+  install this one.
+
 ## 0.1.1
 
 - Marketplace icon.
