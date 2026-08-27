@@ -14,8 +14,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { resolve } from "node:path";
-import { LingoStore } from "../db/store.ts";
 import { registerLingoTools } from "./tools.ts";
+import { StoreProvider } from "./stores.ts";
 
 function resolveDbPath(): string {
   const raw =
@@ -27,13 +27,14 @@ function resolveDbPath(): string {
 
 async function main(): Promise<void> {
   const dbPath = resolveDbPath();
-  const store = LingoStore.open(dbPath);
+  const stores = new StoreProvider(dbPath, process.cwd());
+  stores.default(); // open the primary DB up front
   const server = new McpServer({
     name: "lingo",
     version: "0.0.1",
   });
 
-  registerLingoTools(server, store);
+  registerLingoTools(server, stores);
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

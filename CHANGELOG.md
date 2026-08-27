@@ -13,6 +13,11 @@
   command, so the agent logs the details that make the dictionary worth having.
 - Detection recognises React Native / Expo / Flutter, Electron / Tauri, Unity /
   Godot / Phaser, and Terraform / Pulumi / CDK.
+- **Works from a parent directory.** `log_element` / `list_elements` /
+  `get_element` take an optional `project` path; the server routes the call to
+  that project's own `.lingo/lingo.sqlite`. `/lingo-init` now takes a folder
+  argument (`/lingo-init packages/api`) and tells the agent to pass `project`
+  accordingly — so you can catalog a sub-project without opening it directly.
 
 ## 0.1.2
 

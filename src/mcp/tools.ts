@@ -1,10 +1,18 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { LingoStore } from "../db/store.ts";
 import { getProfile } from "../profiles.ts";
+import type { StoreProvider } from "./stores.ts";
 
-export function registerLingoTools(server: McpServer, store: LingoStore): void {
-  const profile = getProfile(store.getProfile());
+const PROJECT_DESC =
+  "Only when you are working from a directory ABOVE the project: the project's " +
+  "path relative to the working directory, so the entry is recorded in that " +
+  "project's dictionary. Omit when the working directory is the project.";
+
+export function registerLingoTools(
+  server: McpServer,
+  stores: StoreProvider,
+): void {
+  const profile = getProfile(stores.default().getProfile());
   const areaLower = profile.areaNoun.toLowerCase();
 
   const kindLine = profile.kinds.length
@@ -82,10 +90,11 @@ export function registerLingoTools(server: McpServer, store: LingoStore): void {
           .string()
           .optional()
           .describe("If this is a rename, the name it had before."),
+        project: z.string().optional().describe(PROJECT_DESC),
       },
     },
     async (args) => {
-      const result = store.upsertElement({
+      const result = stores.get(args.project).upsertElement({
         area: args.area,
         name: args.name,
         file: args.file ?? null,
@@ -119,10 +128,11 @@ export function registerLingoTools(server: McpServer, store: LingoStore): void {
           .string()
           .optional()
           .describe(`Optional ${areaLower} filter.`),
+        project: z.string().optional().describe(PROJECT_DESC),
       },
     },
     async (args) => {
-      const elements = store.listElements(args.area);
+      const elements = stores.get(args.project).listElements(args.area);
       return {
         content: [{ type: "text", text: JSON.stringify(elements, null, 2) }],
       };
@@ -139,10 +149,11 @@ export function registerLingoTools(server: McpServer, store: LingoStore): void {
       inputSchema: {
         area: z.string().min(1),
         name: z.string().min(1),
+        project: z.string().optional().describe(PROJECT_DESC),
       },
     },
     async (args) => {
-      const element = store.getElement(args.area, args.name);
+      const element = stores.get(args.project).getElement(args.area, args.name);
       return {
         content: [
           {
