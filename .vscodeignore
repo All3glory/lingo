@@ -7,6 +7,7 @@ tsconfig.json
 eslint.config.js
 .prettierrc.json
 .gitignore
+.gitattributes
 DECISIONS.md
 **/*.map
 **/*.ts
