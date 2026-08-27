@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Marketplace icon.
+- Fixed a grammar slip in the generated `/lingo-init` command ("for an page").
+
 ## 0.1.0
 
 First public release.
