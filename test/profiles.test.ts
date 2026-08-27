@@ -44,7 +44,42 @@ test("every profile has content the generators depend on", () => {
   }
 });
 
-test("web offers the map view; others default to tree", () => {
-  assert.ok(PROFILES.web.views.includes("map"));
-  assert.equal(PROFILES.backend.views[0], "tree");
+test("every profile except generic offers a map, map-first", () => {
+  for (const id of profileIds()) {
+    const p = PROFILES[id];
+    if (id === "generic") {
+      assert.equal(p.map, undefined);
+      continue;
+    }
+    assert.ok(p.map, `${id}: no map config`);
+    assert.equal(p.views[0], "map", `${id}: map should be the default view`);
+  }
+});
+
+test("kind-based maps cover the whole vocabulary", () => {
+  for (const id of profileIds()) {
+    const p = PROFILES[id];
+    if (!p.map || p.map.by !== "kind") continue;
+    const inABand = new Set(p.map.bands.flatMap((b) => b.match));
+    for (const kind of p.kinds) {
+      if (kind === "other") continue;
+      assert.ok(
+        inABand.has(kind),
+        `${id}: kind "${kind}" is in the vocabulary but no map band`,
+      );
+    }
+    // and no band references a kind that isn't in the vocabulary
+    for (const m of inABand) {
+      assert.ok(
+        p.kinds.includes(m),
+        `${id}: map band references unknown kind "${m}"`,
+      );
+    }
+  }
+});
+
+test("web's map is a region silhouette", () => {
+  assert.equal(PROFILES.web.map?.by, "region");
+  assert.equal(PROFILES.web.map?.layout, "silhouette");
+  assert.equal(PROFILES.web.map?.bands.length, 4);
 });

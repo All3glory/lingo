@@ -327,14 +327,14 @@ button.link.file {
   word-break: break-all;
 }
 
-/* ---- block / map view -------------------------------------------- */
+/* ---- map view --------------------------------------------------- */
 
 .legend {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 10px;
-  font-size: 0.85em;
+  font-size: 0.82em;
   color: var(--vscode-descriptionForeground);
 }
 
@@ -354,7 +354,7 @@ button.link.file {
 
 .map-frame {
   border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
-  border-radius: 4px;
+  border-radius: 5px;
   padding: 6px;
   margin-bottom: 14px;
   background: var(--vscode-editorWidget-background);
@@ -370,33 +370,41 @@ button.link.file {
   gap: 6px;
 }
 
+.map-mid .grow {
+  flex: 3;
+}
+.map-mid .map-band:not(.grow) {
+  flex: 1;
+}
+
 .map-band {
-  border: 1px dashed var(--vscode-widget-border, rgba(128, 128, 128, 0.4));
+  border: 1px solid var(--k, #888);
+  border-left-width: 3px;
   border-radius: 3px;
-  padding: 4px;
+  padding: 4px 5px 5px;
   margin-bottom: 6px;
-  min-height: 24px;
+  background: color-mix(in srgb, var(--k, #888) 8%, transparent);
 }
 
 .map-band:last-child {
   margin-bottom: 0;
 }
 
-.map-band-main {
-  flex: 3;
+.map-band-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--k, #888);
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
-.map-band-aside {
-  flex: 1;
-}
-
-.flow-row {
+.map-blocks.flow-row {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
-
-.flow-col {
+.map-blocks.flow-col {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -409,49 +417,43 @@ button.link.file {
 }
 
 .map-block {
-  border-left: 3px solid var(--k, #888);
-  background: color-mix(in srgb, var(--k, #888) 16%, transparent);
-  padding: 4px 6px;
-  border-radius: 2px;
-  font-size: 0.88em;
+  background: color-mix(in srgb, var(--k, #888) 22%, var(--vscode-editor-background));
+  border: 1px solid color-mix(in srgb, var(--k, #888) 40%, transparent);
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.86em;
   line-height: 1.3;
   cursor: default;
   word-break: break-word;
 }
 
-.map-block.clickable {
-  cursor: pointer;
-}
-
-.map-block.clickable:hover {
-  background: color-mix(in srgb, var(--k, #888) 28%, transparent);
-}
-
-.flow-row .map-block {
+.map-blocks.flow-row .map-block {
   flex: 1 1 auto;
 }
 
-.kind-nav {
+.map-block.clickable {
+  cursor: pointer;
+}
+.map-block.clickable:hover {
+  background: color-mix(in srgb, var(--k, #888) 34%, var(--vscode-editor-background));
+}
+
+/* band palette — index-based, works in light and dark */
+.band-c0 {
   --k: #3b82f6;
 }
-.kind-text {
+.band-c1 {
   --k: #22c55e;
 }
-.kind-image {
+.band-c2 {
   --k: #f59e0b;
 }
-.kind-button {
+.band-c3 {
   --k: #a855f7;
 }
-.kind-form {
+.band-c4 {
   --k: #14b8a6;
 }
-.kind-container {
-  --k: #94a3b8;
-}
-.kind-footer {
-  --k: #64748b;
-}
-.kind-other {
-  --k: #9ca3af;
+.band-c5 {
+  --k: #ef4444;
 }

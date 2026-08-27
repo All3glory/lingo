@@ -10,6 +10,24 @@
 
 export type ViewId = "glossary" | "tree" | "map";
 
+/** One horizontal band of the Map view. */
+export interface MapBand {
+  label: string;
+  /** `kind` values (or `region` values for web) whose items fall in this band. */
+  match: string[];
+}
+
+export interface MapConfig {
+  /** Which field decides an item's band. */
+  by: "kind" | "region";
+  /**
+   * `silhouette` — header/footer full-width, main + aside side by side (web).
+   * `stack` — every band full-width, top to bottom.
+   */
+  layout: "silhouette" | "stack";
+  bands: MapBand[];
+}
+
 export interface Profile {
   id: string;
   label: string;
@@ -24,6 +42,8 @@ export interface Profile {
   kinds: string[];
   /** Sidebar views this profile offers; first is the default. */
   views: ViewId[];
+  /** The Map view's bands. Omit to not offer a Map for this profile. */
+  map?: MapConfig;
   /**
    * The "what to record" clause, dropped into CLAUDE.md and the tool
    * description. Finishes "record every …".
@@ -75,6 +95,16 @@ export const PROFILES: Record<string, Profile> = {
       "other",
     ],
     views: ["map", "tree", "glossary"],
+    map: {
+      by: "region",
+      layout: "silhouette",
+      bands: [
+        { label: "Header", match: ["header"] },
+        { label: "Main", match: ["main"] },
+        { label: "Aside", match: ["aside"] },
+        { label: "Footer", match: ["footer"] },
+      ],
+    },
     records:
       "named UI element — nav bars, hero sections, headings, cards, lists, " +
       "forms, buttons, footers, modals",
@@ -124,7 +154,27 @@ export const PROFILES: Record<string, Profile> = {
       "error",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        {
+          label: "Entry",
+          match: ["endpoint", "route", "controller", "handler", "middleware", "guard"],
+        },
+        {
+          label: "Logic",
+          match: ["service", "usecase", "model", "entity", "schema"],
+        },
+        { label: "Data", match: ["repository", "query", "migration"] },
+        {
+          label: "Async",
+          match: ["job", "worker", "queue", "cron", "event", "listener"],
+        },
+        { label: "Edges", match: ["webhook", "client", "config", "flag", "error"] },
+      ],
+    },
     records:
       "named part of the backend — endpoints and routes, request handlers, " +
       "services, data models, middleware, background jobs, queues, events",
@@ -166,7 +216,33 @@ export const PROFILES: Record<string, Profile> = {
       "entrypoint",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        { label: "Entry points", match: ["entrypoint"] },
+        {
+          label: "Public API",
+          match: [
+            "function",
+            "class",
+            "hook",
+            "component",
+            "decorator",
+            "type",
+            "interface",
+            "enum",
+            "generic",
+            "constant",
+            "config",
+            "default",
+          ],
+        },
+        { label: "Internal", match: ["helper"] },
+        { label: "Extension", match: ["plugin", "hookpoint"] },
+      ],
+    },
     records:
       "named piece of the public API — exported functions, classes, hooks, " +
       "components, types, constants, and the modules that group them",
@@ -203,7 +279,19 @@ export const PROFILES: Record<string, Profile> = {
       "action",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        { label: "Commands", match: ["command", "subcommand", "action"] },
+        {
+          label: "Inputs",
+          match: ["flag", "option", "argument", "env", "config-key", "prompt"],
+        },
+        { label: "Outputs", match: ["output", "format", "exit-code"] },
+      ],
+    },
     records:
       "named part of the CLI — commands and subcommands, their flags and " +
       "arguments, config keys, and notable output formats",
@@ -250,7 +338,27 @@ export const PROFILES: Record<string, Profile> = {
       "param-set",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        {
+          label: "Sources",
+          match: ["source", "raw", "dataset", "staging", "table", "schema"],
+        },
+        { label: "Transforms", match: ["transform", "feature", "feature-set"] },
+        {
+          label: "Pipelines",
+          match: ["pipeline", "dag", "task", "notebook", "script"],
+        },
+        { label: "Models", match: ["model", "experiment", "run", "param-set"] },
+        {
+          label: "Outcomes",
+          match: ["metric", "threshold", "report", "dashboard", "mart"],
+        },
+      ],
+    },
     records:
       "named part of the data work — datasets and sources, features, " +
       "transforms, pipeline stages, models, experiments, key metrics",
@@ -291,7 +399,23 @@ export const PROFILES: Record<string, Profile> = {
       "storage-key",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        { label: "Navigation", match: ["navigator", "stack", "tab", "deep-link"] },
+        { label: "Screens", match: ["screen"] },
+        {
+          label: "Pieces",
+          match: ["component", "sheet", "modal", "list", "form", "field", "button"],
+        },
+        {
+          label: "Native",
+          match: ["native-module", "permission", "notification", "storage-key"],
+        },
+      ],
+    },
     records:
       "named part of the app — screens, navigators, shared components, native " +
       "modules, permissions, deep links",
@@ -330,7 +454,23 @@ export const PROFILES: Record<string, Profile> = {
       "notification",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        { label: "Windows", match: ["window", "view", "panel"] },
+        {
+          label: "Commands",
+          match: ["menu", "menu-item", "command", "action", "shortcut"],
+        },
+        { label: "Bridge", match: ["ipc-channel", "protocol"] },
+        {
+          label: "System",
+          match: ["tray-item", "pref", "dialog", "notification"],
+        },
+      ],
+    },
     records:
       "named part of the app — windows, views, menus and commands, keyboard " +
       "shortcuts, IPC channels, tray items, preferences",
@@ -377,7 +517,28 @@ export const PROFILES: Record<string, Profile> = {
       "vfx",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        {
+          label: "Entities",
+          match: ["entity", "actor", "character", "enemy", "npc", "prop", "prefab"],
+        },
+        {
+          label: "Systems",
+          match: ["system", "component", "spawner", "trigger"],
+        },
+        { label: "States", match: ["state", "transition"] },
+        { label: "Play", match: ["ability", "item", "weapon", "pickup"] },
+        {
+          label: "Presentation",
+          match: ["hud", "menu", "asset", "sfx", "music", "vfx"],
+        },
+        { label: "Signals", match: ["signal"] },
+      ],
+    },
     records:
       "named part of the game — scenes and levels, entities and prefabs, " +
       "systems, state-machine states, abilities and items, signals, assets",
@@ -415,7 +576,20 @@ export const PROFILES: Record<string, Profile> = {
       "role",
       "other",
     ],
-    views: ["tree", "glossary"],
+    views: ["map", "tree", "glossary"],
+    map: {
+      by: "kind",
+      layout: "stack",
+      bands: [
+        { label: "Providers", match: ["provider"] },
+        { label: "Resources", match: ["resource", "module", "stack"] },
+        {
+          label: "Config",
+          match: ["variable", "secret", "output", "env", "policy", "role"],
+        },
+        { label: "Delivery", match: ["pipeline", "workflow", "job", "step"] },
+      ],
+    },
     records:
       "named part of the infrastructure — resources, modules, stacks, " +
       "environments, pipelines and workflows, secrets, outputs",

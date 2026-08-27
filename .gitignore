@@ -7,3 +7,4 @@ dist/
 .vscode-test/
 .DS_Store
 .claude/settings.local.json
+.claude/commands/lingo-init.md
