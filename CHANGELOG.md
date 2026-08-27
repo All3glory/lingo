@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.0
+
+- **More project types.** Added `mobile`, `desktop`, `game`, and `infra`
+  profiles; renamed `service` → `backend` (existing databases migrate
+  automatically). Every profile's `kind` vocabulary is wider.
+- **"Especially log these" guidance.** Each profile now carries a list of the
+  things that are easy to forget for that kind of project — endpoint
+  method+paths and event-name strings for a backend, data lineage and feature
+  definitions for a data project, IPC channel names for a desktop app, and so
+  on. This goes into the generated `CLAUDE.md` section and the `/lingo-init`
+  command, so the agent logs the details that make the dictionary worth having.
+- Detection recognises React Native / Expo / Flutter, Electron / Tauri, Unity /
+  Godot / Phaser, and Terraform / Pulumi / CDK.
+- **Works from a parent directory.** `log_element` / `list_elements` /
+  `get_element` take an optional `project` path; the server routes the call to
+  that project's own `.lingo/lingo.sqlite`. `/lingo-init` now takes a folder
+  argument (`/lingo-init packages/api`) and tells the agent to pass `project`
+  accordingly — so you can catalog a sub-project without opening it directly.
+- The project type is a one-time choice at setup (pick from the dropdown, or
+  take the detected default). The sidebar no longer shows a type switcher; use
+  **Lingo: Change project type** in the command palette if detection was wrong.
+
 ## 0.1.2
 
 - Publisher id is `pwnsbd`, so the extension id is now **`pwnsbd.lingo`**

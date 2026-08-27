@@ -16,14 +16,23 @@ change a named thing** — the vocabulary depends on the project profile:
 | Profile | Things to log |
 | --- | --- |
 | web | nav bars, hero sections, headings, cards, forms, buttons, footers, modals |
-| service | endpoints, handlers, services, models, middleware, jobs, queues, events |
+| backend | endpoints, handlers, services, models, middleware, jobs, queues, events |
 | library | exported functions, classes, hooks, components, types, constants, modules |
 | cli | commands, subcommands, flags, arguments, config keys |
 | data | datasets, features, transforms, pipeline stages, models, experiments, metrics |
+| mobile | screens, navigators, components, native modules, permissions, deep links |
+| desktop | windows, menus, commands, shortcuts, IPC channels, tray items, prefs |
+| game | scenes, entities, systems, state-machine states, abilities, signals, assets |
+| infra | resources, modules, stacks, pipelines, secrets, outputs |
 | generic | the components, modules, services, or concepts referred to by name |
 
 Do it as part of the same change, not batched later. Re-logging something that
 already exists just updates its row (matched on `area` + `name`), so log freely.
+
+Each profile also carries an **"especially log these"** list — the details that
+are easy to forget for that kind of project (an endpoint's method+path, a data
+pipeline's lineage, IPC channel names). The injected project `CLAUDE.md` spells
+these out.
 
 Pass:
 

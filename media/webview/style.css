@@ -139,29 +139,15 @@ select.profile-select {
   border-radius: 3px;
 }
 
-.chip-wrap {
-  position: relative;
-  display: inline-flex;
-  margin-left: auto;
-}
-
 .profile-chip {
+  margin-left: auto;
   font-size: 0.76rem;
   color: var(--vscode-descriptionForeground);
   border: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.35));
   border-radius: 10px;
   padding: 0 8px;
   line-height: 1.7;
-  pointer-events: none;
   white-space: nowrap;
-}
-
-select.chip-select {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  opacity: 0;
-  cursor: pointer;
 }
 
 /* ---- folder bar + toolbar ------------------------------------------- */
