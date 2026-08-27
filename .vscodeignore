@@ -1,6 +1,7 @@
 .vscode/**
 src/**
 test/**
+scripts/**
 node_modules/**
 esbuild.js
 tsconfig.json
@@ -9,5 +10,6 @@ eslint.config.js
 .gitignore
 .gitattributes
 DECISIONS.md
+media/icon-source.png
 **/*.map
 **/*.ts

@@ -33,6 +33,7 @@
   "categories": [
     "Other"
   ],
+  "icon": "media/icon.png",
   "main": "./dist/extension.js",
   "activationEvents": [
     "onStartupFinished"
@@ -122,6 +123,7 @@
     "format": "prettier --write .",
     "test": "node --test \"test/**/*.test.ts\"",
     "check": "npm run typecheck && npm run lint && npm run build",
+    "icon": "node scripts/gen-icon.mjs",
     "vscode:prepublish": "npm run build",
     "vsix": "vsce package --allow-missing-repository --out lingo.vsix"
   },
@@ -135,6 +137,7 @@
     "@vscode/vsce": "^3.2.1",
     "esbuild": "^0.24.0",
     "eslint": "^9.17.0",
+    "jimp": "^1.6.1",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.0"
