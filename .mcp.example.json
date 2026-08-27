@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lingo": {
+      "command": "node",
+      "args": ["/absolute/path/to/lingo/dist/mcp-server.js"],
+      "env": {
+        "LINGO_DB_PATH": "/absolute/path/to/your-project/.lingo/lingo.sqlite"
+      }
+    }
+  }
+}

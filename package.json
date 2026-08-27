@@ -1,0 +1,142 @@
+{
+  "name": "lingo",
+  "displayName": "Lingo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A shared dictionary between you and your coding agent: a living record of every named part of your project — components, endpoints, modules, commands — so you can point precisely.",
+  "publisher": "All3gory",
+  "license": "MIT",
+  "homepage": "https://pwnsbd.me",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/All3gory/lingo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/All3gory/lingo/issues"
+  },
+  "sponsor": {
+    "url": "https://buymeacoffee.com/pwnsbd"
+  },
+  "keywords": [
+    "ai",
+    "claude",
+    "mcp",
+    "agent",
+    "documentation",
+    "glossary",
+    "components"
+  ],
+  "engines": {
+    "vscode": "^1.96.0",
+    "node": ">=22"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "lingo",
+          "title": "Lingo",
+          "icon": "media/lingo.svg"
+        }
+      ]
+    },
+    "views": {
+      "lingo": [
+        {
+          "id": "lingo.elements",
+          "name": "Elements",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "lingo.setup",
+        "title": "Lingo: Set up Lingo in the selected project"
+      },
+      {
+        "command": "lingo.refresh",
+        "title": "Lingo: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "lingo.chooseFolder",
+        "title": "Lingo: Choose project",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "lingo.copyInitCommand",
+        "title": "Lingo: Copy the /lingo-init command"
+      },
+      {
+        "command": "lingo.openDatabase",
+        "title": "Lingo: Reveal database file"
+      },
+      {
+        "command": "lingo.showLog",
+        "title": "Lingo: Show log"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "lingo.chooseFolder",
+          "when": "view == lingo.elements",
+          "group": "navigation@1"
+        },
+        {
+          "command": "lingo.refresh",
+          "when": "view == lingo.elements",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Lingo",
+      "properties": {
+        "lingo.databasePath": {
+          "type": "string",
+          "default": ".lingo/lingo.sqlite",
+          "description": "Path to the Lingo SQLite file, relative to the workspace root."
+        },
+        "lingo.nodePath": {
+          "type": "string",
+          "default": "node",
+          "description": "Node executable used to run the bundled MCP server and DB reader. Must be Node 22.5+ (for node:sqlite)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "format": "prettier --write .",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "check": "npm run typecheck && npm run lint && npm run build",
+    "vscode:prepublish": "npm run build",
+    "vsix": "vsce package --allow-missing-repository --out lingo.vsix"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.96.0",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0"
+  }
+}
