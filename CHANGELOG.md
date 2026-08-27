@@ -21,6 +21,13 @@
 - The project type is a one-time choice at setup (pick from the dropdown, or
   take the detected default). The sidebar no longer shows a type switcher; use
   **Lingo: Change project type** in the command palette if detection was wrong.
+- **A Map for every project type**, not just websites. The website Map (the
+  page silhouette) is now one case of a general banded layout: a stack of
+  labelled bands with the entries as colour-coded blocks. Backend →
+  Entry / Logic / Data / Async / Edges; data → Sources / Transforms /
+  Pipelines / Models / Outcomes; mobile → Navigation / Screens / Pieces /
+  Native; desktop → Windows / Commands / Bridge / System; and so on. Map is the
+  default view for every type; Tree and Glossary stay.
 
 ## 0.1.2
 

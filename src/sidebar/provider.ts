@@ -35,6 +35,7 @@ function profilePayload(p: Profile) {
     areaNoun: p.areaNoun,
     areaNounPlural: p.areaNounPlural,
     views: p.views,
+    map: p.map ?? null,
   };
 }
 

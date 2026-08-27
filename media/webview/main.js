@@ -223,8 +223,18 @@
     const areas = Object.keys(byArea).sort();
 
     if (mode === "map") {
-      body.appendChild(legend());
-      for (const a of areas) renderAreaMap(body, a, byArea[a]);
+      const cfg = mapConfig();
+      if (!cfg) {
+        body.appendChild(
+          el("div", {
+            class: "notice",
+            text: "No map for this project type — try Tree or Glossary.",
+          }),
+        );
+      } else {
+        body.appendChild(legend(cfg));
+        for (const a of areas) renderAreaMap(body, a, byArea[a], cfg);
+      }
     } else if (mode === "tree") {
       for (const a of areas) renderAreaTree(body, a, byArea[a]);
     } else {
@@ -373,89 +383,102 @@
     return line;
   }
 
-  // ---- map (web) ----------------------------------------------------
+  // ---- map (per profile) ------------------------------------------
 
-  function renderAreaMap(parent, area, items) {
+  function mapConfig() {
+    return (state.profile && state.profile.map) || null;
+  }
+
+  // Which band an item belongs to, as a 0-based index into cfg.bands (-1 = Other).
+  function bandIndex(item, cfg) {
+    const key =
+      cfg.by === "region"
+        ? item.region || webRegion(item)
+        : (item.kind || "").toLowerCase();
+    return cfg.bands.findIndex((b) => b.match.includes(key));
+  }
+
+  function renderAreaMap(parent, area, items, cfg) {
     const sorted = [...items].sort((a, b) => a.id - b.id);
-    const bands = { header: [], main: [], aside: [], footer: [] };
+    const buckets = cfg.bands.map(() => []);
+    const other = [];
     for (const item of sorted) {
-      const kind = inferKind(item);
-      bands[inferRegion(item, kind)].push({ item, kind });
+      const i = bandIndex(item, cfg);
+      (i >= 0 ? buckets[i] : other).push(item);
     }
+
     const frame = el("div", { class: "map-frame" });
     frame.appendChild(el("div", { class: "map-page-label", text: area }));
-    if (bands.header.length) frame.appendChild(band("header", bands.header, "row"));
-    const mid = el("div", { class: "map-mid" });
-    mid.appendChild(band("main", bands.main, "col"));
-    if (bands.aside.length) mid.appendChild(band("aside", bands.aside, "col"));
-    frame.appendChild(mid);
-    if (bands.footer.length) frame.appendChild(band("footer", bands.footer, "row"));
+
+    const bandEl = (label, list, idx, flow) => {
+      const wrap = el("div", {
+        class: `map-band band-c${((idx % 6) + 6) % 6} flow-${flow}`,
+      });
+      wrap.appendChild(el("div", { class: "map-band-label", text: label }));
+      const blocks = el("div", { class: `map-blocks flow-${flow}` });
+      if (!list.length) {
+        blocks.appendChild(el("span", { class: "map-empty", text: "—" }));
+      }
+      for (const item of list) {
+        const b = el("div", { class: "map-block", text: item.name });
+        b.title = item.description
+          ? `${item.name} — ${item.description}`
+          : item.name;
+        if (item.filePath) {
+          b.classList.add("clickable");
+          b.addEventListener("click", () =>
+            send("openFile", { file: item.filePath }),
+          );
+        }
+        blocks.appendChild(b);
+      }
+      wrap.appendChild(blocks);
+      return wrap;
+    };
+
+    if (cfg.layout === "silhouette") {
+      // bands are [Header, Main, Aside, Footer] by convention
+      const [h, m, a, f] = buckets;
+      if (h.length) frame.appendChild(bandEl(cfg.bands[0].label, h, 0, "row"));
+      const mid = el("div", { class: "map-mid" });
+      const mainBand = bandEl(cfg.bands[1].label, m, 1, "col");
+      mainBand.classList.add("grow");
+      mid.appendChild(mainBand);
+      if (a.length) mid.appendChild(bandEl(cfg.bands[2].label, a, 2, "col"));
+      frame.appendChild(mid);
+      if (f.length) frame.appendChild(bandEl(cfg.bands[3].label, f, 3, "row"));
+    } else {
+      cfg.bands.forEach((b, i) => {
+        if (buckets[i].length) {
+          frame.appendChild(bandEl(b.label, buckets[i], i, "row"));
+        }
+      });
+    }
+    if (other.length) {
+      frame.appendChild(bandEl("Other", other, cfg.bands.length, "row"));
+    }
     parent.appendChild(frame);
   }
 
-  function band(region, entries, flow) {
-    const wrap = el("div", { class: `map-band map-band-${region} flow-${flow}` });
-    if (!entries.length) {
-      wrap.appendChild(el("div", { class: "map-empty", text: region }));
-      return wrap;
-    }
-    for (const { item, kind } of entries) {
-      const block = el("div", { class: `map-block kind-${kind}`, text: item.name });
-      block.title = item.description
-        ? `${item.name} — ${item.description}`
-        : item.name;
-      if (item.filePath) {
-        block.classList.add("clickable");
-        block.addEventListener("click", () =>
-          send("openFile", { file: item.filePath }),
-        );
-      }
-      wrap.appendChild(block);
-    }
-    return wrap;
-  }
-
-  function legend() {
-    const kinds = ["nav", "text", "image", "button", "form", "container", "footer"];
+  function legend(cfg) {
     const box = el("div", { class: "legend" });
-    for (const k of kinds) {
+    cfg.bands.forEach((b, i) => {
       const chip = el("span", { class: "legend-item" });
-      chip.appendChild(el("span", { class: `legend-swatch kind-${k}` }));
-      chip.appendChild(el("span", { text: k }));
+      chip.appendChild(
+        el("span", { class: `legend-swatch band-c${i % 6}` }),
+      );
+      chip.appendChild(el("span", { text: b.label }));
       box.appendChild(chip);
-    }
+    });
     return box;
   }
 
-  const MAP_KINDS = new Set([
-    "nav",
-    "text",
-    "image",
-    "button",
-    "form",
-    "container",
-    "footer",
-  ]);
-
-  function inferKind(item) {
-    if (item.kind && MAP_KINDS.has(item.kind)) return item.kind;
+  // web only: guess a region when `region` wasn't logged
+  function webRegion(item) {
     const s = (item.name + " " + (item.description || "")).toLowerCase();
-    if (/(navbar|\bnav\b|header|menu|breadcrumb|topbar)/.test(s)) return "nav";
+    if (/(navbar|\bnav\b|header|topbar|breadcrumb)/.test(s)) return "header";
     if (/footer/.test(s)) return "footer";
-    if (/(image|\bimg\b|photo|logo|banner|gallery|carousel|video)/.test(s))
-      return "image";
-    if (/(button|\bbtn\b|\bcta\b)/.test(s)) return "button";
-    if (/(form|input|\bfield\b|search|newsletter|sign ?up|subscribe)/.test(s))
-      return "form";
-    if (/(heading|title|headline|\btext\b|paragraph|copy|caption|label)/.test(s))
-      return "text";
-    return "container";
-  }
-
-  function inferRegion(item, kind) {
-    if (item.region) return item.region;
-    if (kind === "nav") return "header";
-    if (kind === "footer") return "footer";
+    if (/(sidebar|\baside\b|rail)/.test(s)) return "aside";
     return "main";
   }
 
